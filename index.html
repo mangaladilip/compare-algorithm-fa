@@ -16,24 +16,29 @@
         body, html {
             margin: 0;
             padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
             font-family: 'Outfit', sans-serif;
             color: var(--dark-text);
             background-color: transparent; 
-            width: 100%;
-            height: 100%;
-            /* Centers the quiz perfectly in your Genially iframe */
             display: flex;
-            align-items: center; 
-            justify-content: center;
+            /* Allows scrolling if the box is incredibly tiny, preventing top-clipping */
+            overflow-y: auto; 
+            overflow-x: hidden;
         }
 
         .assessment-container {
+            /* Centers perfectly but prevents top-clipping on overflow */
+            margin: auto; 
             width: 100%;
-            max-width: 1200px; /* Prevents the buttons from getting too long */
+            max-width: 1200px;
             box-sizing: border-box;
             position: relative;
-            container-type: inline-size; 
-            padding: clamp(10px, 4cqi, 30px);
+            /* Using vmin looks at both height and width of the Genially box */
+            padding: clamp(10px, 4vmin, 30px);
         }
 
         .page {
@@ -54,48 +59,45 @@
             color: var(--primary-green);
             text-align: center;
             margin-top: 0;
-            margin-bottom: clamp(20px, 5cqi, 50px);
+            margin-bottom: clamp(15px, 5vmin, 40px);
             font-weight: 600;
-            /* Increased maximum size to 4rem */
-            font-size: clamp(1.5rem, 6cqi, 4rem); 
+            font-size: clamp(1.1rem, 6vmin, 3.5rem); 
         }
 
         .question-wrapper {
-            margin-bottom: clamp(15px, 4cqi, 40px);
+            margin-bottom: clamp(15px, 4vmin, 30px);
         }
 
         .question-text {
             font-weight: 600;
-            margin-bottom: clamp(15px, 3cqi, 25px);
-            /* Increased maximum size to 3rem */
-            font-size: clamp(1.2rem, 5cqi, 3rem); 
+            margin-bottom: clamp(10px, 3vmin, 20px);
+            font-size: clamp(1rem, 4.5vmin, 2.5rem); 
         }
 
         .code-block {
             background: #fdfbe9;
-            padding: clamp(15px, 3cqi, 25px);
+            padding: clamp(10px, 3vmin, 20px);
             border-radius: 8px;
             font-family: 'Outfit', sans-serif; 
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border: 1px solid var(--accent-yellow);
-            font-size: clamp(1rem, 4.5cqi, 2.2rem);
+            font-size: clamp(0.85rem, 4vmin, 2rem);
             line-height: 1.5;
         }
 
         .options-container {
             display: flex;
             flex-direction: column;
-            gap: clamp(10px, 2.5cqi, 20px);
+            gap: clamp(8px, 2.5vmin, 16px);
         }
 
         .option-btn {
             font-family: 'Outfit', sans-serif;
-            /* Increased maximum size to 2.2rem */
-            font-size: clamp(1rem, 4.5cqi, 2.2rem); 
+            font-size: clamp(0.85rem, 4vmin, 2rem); 
             background-color: #ffffff; 
             color: var(--dark-text);
             border: 2px solid var(--primary-green);
-            padding: clamp(12px, 3cqi, 25px) clamp(20px, 4cqi, 40px);
+            padding: clamp(10px, 3vmin, 20px) clamp(15px, 4vmin, 30px);
             border-radius: 12px;
             cursor: pointer;
             text-align: left;
@@ -134,8 +136,8 @@
         .dnd-pool {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
-            padding: 20px;
+            gap: 10px;
+            padding: 15px;
             border: 2px dashed var(--primary-green);
             border-radius: 12px;
             margin-bottom: 25px;
@@ -145,11 +147,11 @@
         .drag-item {
             background: #ffffff;
             border: 2px solid var(--primary-green);
-            padding: clamp(10px, 2.5cqi, 20px) clamp(15px, 3cqi, 25px);
+            padding: clamp(8px, 2.5vmin, 15px) clamp(12px, 3vmin, 20px);
             border-radius: 8px;
             cursor: grab;
             font-family: 'Outfit', sans-serif;
-            font-size: clamp(0.95rem, 4cqi, 2rem);
+            font-size: clamp(0.85rem, 4vmin, 1.8rem);
             user-select: none;
             transition: border-color 0.2s;
         }
@@ -173,13 +175,13 @@
         .term-box {
             flex: 1;
             min-width: 150px;
-            padding: clamp(12px, 3cqi, 25px);
+            padding: clamp(10px, 3vmin, 20px);
             background: #eaf3e6;
             font-weight: 600;
             border-radius: 8px;
             display: flex;
             align-items: center;
-            font-size: clamp(1rem, 4.5cqi, 2.2rem);
+            font-size: clamp(0.85rem, 4vmin, 2rem);
         }
 
         .drop-zone {
@@ -210,16 +212,16 @@
         .placeholder-text {
             color: #999;
             padding-left: 15px;
-            font-size: clamp(0.95rem, 4cqi, 2rem);
+            font-size: clamp(0.85rem, 4vmin, 1.8rem);
             pointer-events: none;
         }
 
         .feedback-message {
-            margin-top: clamp(20px, 4cqi, 40px);
-            padding: clamp(15px, 3cqi, 25px);
+            margin-top: clamp(15px, 4vmin, 30px);
+            padding: clamp(10px, 3vmin, 20px);
             border-radius: 12px;
             font-weight: 600;
-            font-size: clamp(1rem, 4.5cqi, 2.2rem); 
+            font-size: clamp(0.85rem, 4vmin, 2rem); 
             display: none;
             line-height: 1.4;
         }
@@ -240,15 +242,15 @@
 
         .next-btn {
             font-family: 'Outfit', sans-serif;
-            font-size: clamp(1rem, 4.5cqi, 2.2rem); 
+            font-size: clamp(0.85rem, 4vmin, 2rem); 
             font-weight: 600;
             background-color: var(--primary-green);
             color: #ffffff;
             border: none;
-            padding: clamp(12px, 3cqi, 25px) clamp(24px, 5cqi, 45px);
+            padding: clamp(10px, 3vmin, 20px) clamp(16px, 5vmin, 35px);
             border-radius: 12px;
             cursor: pointer;
-            margin-top: clamp(20px, 4cqi, 40px);
+            margin-top: clamp(15px, 4vmin, 30px);
             display: none;
             float: right;
             transition: background-color 0.2s;
@@ -260,7 +262,7 @@
         
         .completion-box {
             text-align: center;
-            padding: clamp(30px, 5cqi, 60px) clamp(20px, 4cqi, 40px);
+            padding: clamp(20px, 5vmin, 40px) clamp(15px, 4vmin, 20px);
             background-color: #eaf3e6;
             border: 2px solid var(--primary-green);
             border-radius: 16px;
