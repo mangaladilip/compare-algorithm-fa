@@ -27,7 +27,8 @@
             width: 100%;
             box-sizing: border-box;
             position: relative;
-            padding: clamp(10px, 2vw, 20px);
+            container-type: inline-size; 
+            padding: clamp(10px, 4cqi, 30px);
         }
 
         .page {
@@ -48,45 +49,45 @@
             color: var(--primary-green);
             text-align: center;
             margin-top: 0;
-            margin-bottom: clamp(15px, 4vw, 30px);
+            margin-bottom: clamp(15px, 5cqi, 40px);
             font-weight: 600;
-            font-size: clamp(1.5rem, 5vw, 2.2rem); 
+            font-size: clamp(1.2rem, 6cqi, 3rem); 
         }
 
         .question-wrapper {
-            margin-bottom: clamp(15px, 3vw, 20px);
+            margin-bottom: clamp(15px, 4cqi, 30px);
         }
 
         .question-text {
             font-weight: 600;
-            margin-bottom: clamp(10px, 2.5vw, 15px);
-            font-size: clamp(1.2rem, 4vw, 1.6rem); 
+            margin-bottom: clamp(10px, 3cqi, 20px);
+            font-size: clamp(1.1rem, 5cqi, 2.5rem); 
         }
 
         .code-block {
             background: #fdfbe9;
-            padding: clamp(10px, 2.5vw, 15px);
+            padding: clamp(10px, 3cqi, 20px);
             border-radius: 8px;
             font-family: 'Outfit', sans-serif; 
             margin-bottom: 15px;
             border: 1px solid var(--accent-yellow);
-            font-size: clamp(1rem, 3.5vw, 1.2rem);
+            font-size: clamp(0.9rem, 4.5cqi, 2rem);
             line-height: 1.5;
         }
 
         .options-container {
             display: flex;
             flex-direction: column;
-            gap: clamp(8px, 2vw, 12px);
+            gap: clamp(8px, 2.5cqi, 16px);
         }
 
         .option-btn {
             font-family: 'Outfit', sans-serif;
-            font-size: clamp(1rem, 3.5vw, 1.2rem); 
+            font-size: clamp(0.9rem, 4.5cqi, 2rem); 
             background-color: #ffffff; 
             color: var(--dark-text);
             border: 2px solid var(--primary-green);
-            padding: clamp(10px, 2.5vw, 15px) clamp(15px, 3.5vw, 20px);
+            padding: clamp(10px, 3cqi, 20px) clamp(15px, 4cqi, 30px);
             border-radius: 8px;
             cursor: pointer;
             text-align: left;
@@ -136,11 +137,11 @@
         .drag-item {
             background: #ffffff;
             border: 2px solid var(--primary-green);
-            padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px);
+            padding: clamp(8px, 2.5cqi, 15px) clamp(12px, 3cqi, 20px);
             border-radius: 6px;
             cursor: grab;
             font-family: 'Outfit', sans-serif;
-            font-size: clamp(0.95rem, 3.2vw, 1.15rem);
+            font-size: clamp(0.85rem, 4cqi, 1.8rem);
             user-select: none;
             transition: border-color 0.2s;
         }
@@ -164,13 +165,13 @@
         .term-box {
             flex: 1;
             min-width: 120px;
-            padding: clamp(10px, 2.5vw, 15px);
+            padding: clamp(10px, 3cqi, 20px);
             background: #eaf3e6;
             font-weight: 600;
             border-radius: 6px;
             display: flex;
             align-items: center;
-            font-size: clamp(1rem, 3.5vw, 1.2rem);
+            font-size: clamp(0.9rem, 4.5cqi, 2rem);
         }
 
         .drop-zone {
@@ -201,16 +202,16 @@
         .placeholder-text {
             color: #999;
             padding-left: 10px;
-            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            font-size: clamp(0.85rem, 4cqi, 1.8rem);
             pointer-events: none;
         }
 
         .feedback-message {
-            margin-top: clamp(15px, 3vw, 20px);
-            padding: clamp(10px, 2.5vw, 15px);
+            margin-top: clamp(15px, 4cqi, 30px);
+            padding: clamp(10px, 3cqi, 20px);
             border-radius: 8px;
             font-weight: 600;
-            font-size: clamp(1rem, 3.5vw, 1.15rem); 
+            font-size: clamp(0.9rem, 4.5cqi, 2rem); 
             display: none;
             line-height: 1.4;
         }
@@ -231,15 +232,15 @@
 
         .next-btn {
             font-family: 'Outfit', sans-serif;
-            font-size: clamp(1rem, 3.5vw, 1.2rem); 
+            font-size: clamp(0.9rem, 4.5cqi, 2rem); 
             font-weight: 600;
             background-color: var(--primary-green);
             color: #ffffff;
             border: none;
-            padding: clamp(10px, 2vw, 12px) clamp(16px, 4vw, 24px);
+            padding: clamp(10px, 3cqi, 20px) clamp(16px, 5cqi, 35px);
             border-radius: 8px;
             cursor: pointer;
-            margin-top: clamp(15px, 3vw, 20px);
+            margin-top: clamp(15px, 4cqi, 30px);
             display: none;
             float: right;
             transition: background-color 0.2s;
@@ -251,7 +252,7 @@
         
         .completion-box {
             text-align: center;
-            padding: clamp(20px, 5vw, 40px) clamp(15px, 4vw, 20px);
+            padding: clamp(20px, 5cqi, 40px) clamp(15px, 4cqi, 20px);
             background-color: #eaf3e6;
             border: 2px solid var(--primary-green);
             border-radius: 12px;
