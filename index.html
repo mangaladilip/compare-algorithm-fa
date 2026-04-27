@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prior Knowledge Assessment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-green: #77a766;
+            --accent-yellow: #e8d227;
+            --dark-text: #232323;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            color: var(--dark-text);
+            background-color: transparent; 
+            width: 100%;
+            height: 100%;
+        }
+
+        .assessment-container {
+            width: 100%;
+            box-sizing: border-box;
+            position: relative;
+            padding: clamp(10px, 2vw, 20px);
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--primary-green);
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: clamp(15px, 4vw, 30px);
+            font-weight: 600;
+            font-size: clamp(1.5rem, 5vw, 2.2rem); 
+        }
+
+        .question-wrapper {
+            margin-bottom: clamp(15px, 3vw, 20px);
+        }
+
+        .question-text {
+            font-weight: 600;
+            margin-bottom: clamp(10px, 2.5vw, 15px);
+            font-size: clamp(1.2rem, 4vw, 1.6rem); 
+        }
+
+        .code-block {
+            background: #fdfbe9;
+            padding: clamp(10px, 2.5vw, 15px);
+            border-radius: 8px;
+            font-family: 'Outfit', sans-serif; 
+            margin-bottom: 15px;
+            border: 1px solid var(--accent-yellow);
+            font-size: clamp(1rem, 3.5vw, 1.2rem);
+            line-height: 1.5;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(8px, 2vw, 12px);
+        }
+
+        .option-btn {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(1rem, 3.5vw, 1.2rem); 
+            background-color: #ffffff; 
+            color: var(--dark-text);
+            border: 2px solid var(--primary-green);
+            padding: clamp(10px, 2.5vw, 15px) clamp(15px, 3.5vw, 20px);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            line-height: 1.4;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: var(--primary-green);
+            color: #ffffff;
+        }
+
+        .option-btn.selected-correct {
+            background-color: var(--primary-green);
+            color: #ffffff;
+            border-color: var(--primary-green);
+        }
+
+        .option-btn.selected-incorrect {
+            background-color: var(--accent-yellow);
+            color: var(--dark-text);
+            border-color: var(--accent-yellow);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .option-btn.selected-correct:disabled, 
+        .option-btn.selected-incorrect:disabled {
+            opacity: 1;
+        }
+
+        /* Drag and Drop Styles */
+        .dnd-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 15px;
+            border: 2px dashed var(--primary-green);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: #ffffff;
+        }
+
+        .drag-item {
+            background: #ffffff;
+            border: 2px solid var(--primary-green);
+            padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px);
+            border-radius: 6px;
+            cursor: grab;
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(0.95rem, 3.2vw, 1.15rem);
+            user-select: none;
+            transition: border-color 0.2s;
+        }
+
+        .drag-item:active {
+            cursor: grabbing;
+        }
+
+        .drag-item.dragging {
+            opacity: 0.5;
+        }
+
+        .match-row {
+            display: flex;
+            gap: 10px;
+            align-items: stretch;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .term-box {
+            flex: 1;
+            min-width: 120px;
+            padding: clamp(10px, 2.5vw, 15px);
+            background: #eaf3e6;
+            font-weight: 600;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            font-size: clamp(1rem, 3.5vw, 1.2rem);
+        }
+
+        .drop-zone {
+            flex: 2;
+            min-width: 200px;
+            min-height: 50px;
+            border: 2px dashed #ccc;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 5px;
+            transition: all 0.2s;
+            background-color: #ffffff;
+        }
+
+        .drop-zone.drag-over {
+            background: #fdfbe9;
+            border-color: var(--accent-yellow);
+        }
+
+        .drop-zone.correct {
+            border-color: var(--primary-green);
+            background: transparent;
+            border-style: solid;
+        }
+
+        .placeholder-text {
+            color: #999;
+            padding-left: 10px;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            pointer-events: none;
+        }
+
+        .feedback-message {
+            margin-top: clamp(15px, 3vw, 20px);
+            padding: clamp(10px, 2.5vw, 15px);
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: clamp(1rem, 3.5vw, 1.15rem); 
+            display: none;
+            line-height: 1.4;
+        }
+
+        .feedback-message.correct {
+            display: block;
+            background-color: #eaf3e6;
+            color: var(--primary-green);
+            border-left: 5px solid var(--primary-green);
+        }
+
+        .feedback-message.incorrect {
+            display: block;
+            background-color: #fdfbe9;
+            color: var(--dark-text);
+            border-left: 5px solid var(--accent-yellow);
+        }
+
+        .next-btn {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(1rem, 3.5vw, 1.2rem); 
+            font-weight: 600;
+            background-color: var(--primary-green);
+            color: #ffffff;
+            border: none;
+            padding: clamp(10px, 2vw, 12px) clamp(16px, 4vw, 24px);
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: clamp(15px, 3vw, 20px);
+            display: none;
+            float: right;
+            transition: background-color 0.2s;
+        }
+
+        .next-btn:hover {
+            background-color: #5c844d;
+        }
+        
+        .completion-box {
+            text-align: center;
+            padding: clamp(20px, 5vw, 40px) clamp(15px, 4vw, 20px);
+            background-color: #eaf3e6;
+            border: 2px solid var(--primary-green);
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="assessment-container clearfix">
+        
+        <div class="page active" id="page-1">
+            <h2>Choose the correct option.</h2>
+            <div class="question-wrapper">
+                <div class="question-text">1. Which algorithm is more efficient?</div>
+                <div class="options-container" id="opts-1">
+                    <button class="option-btn" onclick="selectAnswer(1, this, false)">An algorithm with more steps</button>
+                    <button class="option-btn" onclick="selectAnswer(1, this, true)">An algorithm with fewer steps</button>
+                    <button class="option-btn" onclick="selectAnswer(1, this, false)">An algorithm with longer code</button>
+                    <button class="option-btn" onclick="selectAnswer(1, this, false)">An algorithm with more variables</button>
+                </div>
+                <div class="feedback-message" id="feed-1"></div>
+                <button class="next-btn" id="next-1" onclick="goToPage(2)">Next question</button>
+            </div>
+        </div>
+
+        <div class="page" id="page-2">
+            <h2>Choose the correct option.</h2>
+            <div class="question-wrapper">
+                <div class="question-text">2. Different algorithms can solve the same problem.</div>
+                <div class="options-container" id="opts-2">
+                    <button class="option-btn" onclick="selectAnswer(2, this, true)">True</button>
+                    <button class="option-btn" onclick="selectAnswer(2, this, false)">False</button>
+                </div>
+                <div class="feedback-message" id="feed-2"></div>
+                <button class="next-btn" id="next-2" onclick="goToPage(3)">Next question</button>
+            </div>
+        </div>
+
+        <div class="page" id="page-3">
+            <h2>Choose the correct option.</h2>
+            <div class="question-wrapper">
+                <div class="question-text">3. An algorithm is a sequence of ______ used to solve a problem.</div>
+                <div class="options-container" id="opts-3">
+                    <button class="option-btn" onclick="selectAnswer(3, this, true)">Steps</button>
+                    <button class="option-btn" onclick="selectAnswer(3, this, false)">Numbers</button>
+                    <button class="option-btn" onclick="selectAnswer(3, this, false)">Programs</button>
+                    <button class="option-btn" onclick="selectAnswer(3, this, false)">Errors</button>
+                </div>
+                <div class="feedback-message" id="feed-3"></div>
+                <button class="next-btn" id="next-3" onclick="goToPage(4)">Next question</button>
+            </div>
+        </div>
+
+        <div class="page" id="page-4">
+            <h2>Choose the correct option.</h2>
+            <div class="question-wrapper">
+                <div class="question-text">4. Which of the following are factors used to compare algorithms?</div>
+                <div class="options-container" id="opts-4">
+                    <button class="option-btn" onclick="selectAnswer(4, this, true)">Number of steps and efficiency</button>
+                    <button class="option-btn" onclick="selectAnswer(4, this, false)">Hardware and internet speed</button>
+                    <button class="option-btn" onclick="selectAnswer(4, this, false)">Font size and background color</button>
+                    <button class="option-btn" onclick="selectAnswer(4, this, false)">Length of variable names</button>
+                </div>
+                <div class="feedback-message" id="feed-4"></div>
+                <button class="next-btn" id="next-4" onclick="goToPage(5)">Next question</button>
+            </div>
+        </div>
+
+        <div class="page" id="page-5">
+            <h2>Choose the correct option.</h2>
+            <div class="question-wrapper">
+                <div class="question-text">5. Look at the two algorithms below. Which algorithm is more efficient and why?</div>
+                <div class="code-block">
+                    <strong>Algorithm a:</strong><br>
+                    Start<br>
+                    Input a, b<br>
+                    Sum = a + b<br>
+                    Print sum<br>
+                    End
+                </div>
+                <div class="code-block">
+                    <strong>Algorithm b:</strong><br>
+                    Start<br>
+                    Input a<br>
+                    Input b<br>
+                    Value = a + b<br>
+                    Print value<br>
+                    End
+                </div>
+                <div class="options-container" id="opts-5">
+                    <button class="option-btn" onclick="selectAnswer(5, this, true)">Algorithm a, because it uses fewer steps and variables.</button>
+                    <button class="option-btn" onclick="selectAnswer(5, this, false)">Algorithm b, because taking inputs separately is faster.</button>
+                    <button class="option-btn" onclick="selectAnswer(5, this, false)">Both are equally efficient since they give the same result.</button>
+                    <button class="option-btn" onclick="selectAnswer(5, this, false)">Neither, as they both use the same mathematical operator.</button>
+                </div>
+                <div class="feedback-message" id="feed-5"></div>
+                <button class="next-btn" id="next-5" onclick="goToPage(6)">Next question</button>
+            </div>
+        </div>
+
+        <div class="page" id="page-6">
+            <h2>Match the correct options.</h2>
+            <div class="question-wrapper">
+                <div class="question-text">6. Drag and drop the meanings to match the terms (or tap a meaning, then tap a box).</div>
+                
+                <div class="dnd-pool" id="pool-6">
+                    <div class="drag-item" draggable="true" data-match="suitability">Appropriate for the situation</div>
+                    <div class="drag-item" draggable="true" data-match="efficiency">Less time and fewer steps</div>
+                    <div class="drag-item" draggable="true" data-match="correctness">Correct result</div>
+                </div>
+
+                <div class="match-row">
+                    <div class="term-box">Efficiency</div>
+                    <div class="drop-zone" data-target="efficiency"><span class="placeholder-text">Drop meaning here...</span></div>
+                </div>
+                <div class="match-row">
+                    <div class="term-box">Correctness</div>
+                    <div class="drop-zone" data-target="correctness"><span class="placeholder-text">Drop meaning here...</span></div>
+                </div>
+                <div class="match-row">
+                    <div class="term-box">Suitability</div>
+                    <div class="drop-zone" data-target="suitability"><span class="placeholder-text">Drop meaning here...</span></div>
+                </div>
+
+                <div class="feedback-message" id="feed-6"></div>
+                <button class="next-btn" id="next-6" onclick="goToPage(7)">Next question</button>
+            </div>
+        </div>
+
+        <div class="page" id="page-7">
+            <h2>Choose the correct option.</h2>
+            <div class="question-wrapper">
+                <div class="question-text">7. Assertion: Two algorithms can solve the same problem.<br>Reason: Algorithms can have different steps and structures.</div>
+                <div class="options-container" id="opts-7">
+                    <button class="option-btn" onclick="selectAnswer(7, this, true)">Both are true and the reason explains the assertion.</button>
+                    <button class="option-btn" onclick="selectAnswer(7, this, false)">Both are true but the reason does not explain the assertion.</button>
+                    <button class="option-btn" onclick="selectAnswer(7, this, false)">The assertion is true, but the reason is false.</button>
+                    <button class="option-btn" onclick="selectAnswer(7, this, false)">Both are false.</button>
+                </div>
+                <div class="feedback-message" id="feed-7"></div>
+                <button class="next-btn" id="next-7" onclick="goToPage(8)">Next question</button>
+            </div>
+        </div>
+
+        <div class="page" id="page-8">
+            <h2>Choose the correct option.</h2>
+            <div class="question-wrapper">
+                <div class="question-text">8. A student needs to travel to school.<br>Method a: Walk.<br>Method b: Take a bus.<br>Which method is more suitable?</div>
+                <div class="options-container" id="opts-8">
+                    <button class="option-btn" onclick="selectAnswer(8, this, true)">It depends on the situation, such as distance, time, and cost.</button>
+                    <button class="option-btn" onclick="selectAnswer(8, this, false)">Walking is always more suitable because it is free.</button>
+                    <button class="option-btn" onclick="selectAnswer(8, this, false)">Taking a bus is always more suitable because it is faster.</button>
+                    <button class="option-btn" onclick="selectAnswer(8, this, false)">Neither method is suitable.</button>
+                </div>
+                <div class="feedback-message" id="feed-8"></div>
+                <button class="next-btn" id="next-8" onclick="goToPage(9)">Next question</button>
+            </div>
+        </div>
+
+        <div class="page" id="page-9">
+            <h2>Choose the correct option.</h2>
+            <div class="question-wrapper">
+                <div class="question-text">9. What is wrong with the following algorithm?</div>
+                <div class="code-block">
+                    Start<br>
+                    Input temperature<br>
+                    Fahrenheit = temperature + 32 * 1.8<br>
+                    Print fahrenheit<br>
+                    End
+                </div>
+                <div class="options-container" id="opts-9">
+                    <button class="option-btn" onclick="selectAnswer(9, this, true)">The order of operations is incorrect.</button>
+                    <button class="option-btn" onclick="selectAnswer(9, this, false)">The variables are named incorrectly.</button>
+                    <button class="option-btn" onclick="selectAnswer(9, this, false)">The print statement is missing.</button>
+                    <button class="option-btn" onclick="selectAnswer(9, this, false)">There is no error in this algorithm.</button>
+                </div>
+                <div class="feedback-message" id="feed-9"></div>
+                <button class="next-btn" id="next-9" onclick="goToPage(10)">Next question</button>
+            </div>
+        </div>
+
+        <div class="page" id="page-10">
+            <h2>Choose the correct option.</h2>
+            <div class="question-wrapper">
+                <div class="question-text">10. Explain why the shortest algorithm is not always the best algorithm.</div>
+                <div class="options-container" id="opts-10">
+                    <button class="option-btn" onclick="selectAnswer(10, this, true)">Because suitability depends on context, clarity, and correctness.</button>
+                    <button class="option-btn" onclick="selectAnswer(10, this, false)">Because short algorithms always take longer to run.</button>
+                    <button class="option-btn" onclick="selectAnswer(10, this, false)">Because computers cannot easily understand short code.</button>
+                    <button class="option-btn" onclick="selectAnswer(10, this, false)">The shortest algorithm is actually always the best.</button>
+                </div>
+                <div class="feedback-message" id="feed-10"></div>
+                <button class="next-btn" id="next-10" onclick="goToPage(11)">Finish assessment</button>
+            </div>
+        </div>
+
+        <div class="page" id="page-11">
+            <div class="completion-box">
+                <h2 style="margin-bottom: 15px;">Activity complete!</h2>
+                <div class="question-text" style="margin-bottom: 0;">You have successfully finished the prior knowledge assessment.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Shuffle Function
+        function shuffleContainer(container) {
+            const elementsArray = Array.from(container.children);
+            for (let i = elementsArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [elementsArray[i], elementsArray[j]] = [elementsArray[j], elementsArray[i]];
+            }
+            elementsArray.forEach(element => container.appendChild(element));
+        }
+
+        // MCQ Logic
+        function selectAnswer(questionNumber, selectedButton, isCorrect) {
+            const container = document.getElementById('opts-' + questionNumber);
+            const buttons = container.querySelectorAll('.option-btn');
+            const feedbackBox = document.getElementById('feed-' + questionNumber);
+            const nextButton = document.getElementById('next-' + questionNumber);
+
+            if (isCorrect) {
+                buttons.forEach(btn => {
+                    btn.disabled = true;
+                });
+                
+                selectedButton.classList.add('selected-correct');
+                feedbackBox.textContent = "Spot on! That is the correct answer.";
+                feedbackBox.className = "feedback-message correct";
+                
+                if (nextButton) {
+                    nextButton.style.display = "block";
+                }
+            } else {
+                selectedButton.disabled = true;
+                selectedButton.classList.add('selected-incorrect');
+                feedbackBox.textContent = "Not quite, give it another try.";
+                feedbackBox.className = "feedback-message incorrect";
+            }
+        }
+
+        function goToPage(pageNumber) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+
+            const targetPage = document.getElementById('page-' + pageNumber);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+        }
+
+        // Drag and Drop Logic
+        let draggedElement = null;
+        let matchedItemsCount = 0;
+        let selectedItemForMobile = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Shuffle all MCQ option containers
+            const allOptionContainers = document.querySelectorAll('.options-container');
+            allOptionContainers.forEach(shuffleContainer);
+
+            // Shuffle Drag and Drop pool items
+            const dndPool = document.getElementById('pool-6');
+            if (dndPool) {
+                shuffleContainer(dndPool);
+            }
+
+            const dragItems = document.querySelectorAll('.drag-item');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            const feedbackBox = document.getElementById('feed-6');
+            const nextBtn = document.getElementById('next-6');
+
+            // Setup Draggable Items
+            dragItems.forEach(item => {
+                // Desktop Dragging
+                item.addEventListener('dragstart', (e) => {
+                    draggedElement = item;
+                    e.dataTransfer.setData('text/plain', item.dataset.match);
+                    setTimeout(() => item.classList.add('dragging'), 0);
+                });
+
+                item.addEventListener('dragend', () => {
+                    draggedElement = null;
+                    item.classList.remove('dragging');
+                });
+
+                // Mobile/Click Fallback
+                item.addEventListener('click', () => {
+                    if (item.parentElement.classList.contains('drop-zone')) return; 
+                    
+                    dragItems.forEach(i => i.style.borderColor = '');
+                    selectedItemForMobile = item;
+                    item.style.borderColor = 'var(--accent-yellow)';
+                    feedbackBox.style.display = "none";
+                });
+            });
+
+            // Setup Drop Zones
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    if (!zone.classList.contains('correct')) {
+                        zone.classList.add('drag-over');
+                    }
+                });
+
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over');
+                });
+
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    handleMatchAttempt(zone, draggedElement);
+                });
+
+                // Mobile/Click Drop Fallback
+                zone.addEventListener('click', () => {
+                    if (selectedItemForMobile && !zone.classList.contains('correct')) {
+                        handleMatchAttempt(zone, selectedItemForMobile);
+                        selectedItemForMobile.style.borderColor = '';
+                        selectedItemForMobile = null;
+                    }
+                });
+            });
+
+            function handleMatchAttempt(zone, item) {
+                if (!item) return;
+
+                if (zone.dataset.target === item.dataset.match) {
+                    zone.innerHTML = ''; 
+                    zone.appendChild(item);
+                    zone.classList.add('correct');
+                    item.draggable = false;
+                    item.style.cursor = 'default';
+                    item.style.border = 'none';
+                    item.style.padding = '0';
+                    
+                    matchedItemsCount++;
+                    feedbackBox.textContent = "Good match!";
+                    feedbackBox.className = "feedback-message correct";
+                    feedbackBox.style.display = "block";
+
+                    if (matchedItemsCount === 3) {
+                        feedbackBox.textContent = "All matches correct! Great job.";
+                        nextBtn.style.display = "block";
+                        document.getElementById('pool-6').style.display = "none";
+                    }
+                } else {
+                    feedbackBox.textContent = "That is not the right match. Try again.";
+                    feedbackBox.className = "feedback-message incorrect";
+                    feedbackBox.style.display = "block";
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
